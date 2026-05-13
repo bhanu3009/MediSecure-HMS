@@ -95,47 +95,113 @@
 #         print("You are eligible for the opertaion :")
 
 
-registration_attempts=3
-final_patient=[]
+# registration_attempts=3
+# final_patient=[]
 
-while registration_attempts>0:
-    if registration_attempts==0:
-        break
-    name=input("Please enter the patient name :")
-    patient_age=int(input("Enter patient age :"))
-    is_emergency=input("is patient is in ememrgency ")
+# while registration_attempts>0:
+#     if registration_attempts==0:
+#         break
+#     name=input("Please enter the patient name :")
+#     patient_age=int(input("Enter patient age :"))
+#     is_emergency=input("is patient is in ememrgency ")
 
-    if is_emergency.lower()=="yes" or is_emergency.lower()=="y":
-        final_emergency=True
+#     if is_emergency.lower()=="yes" or is_emergency.lower()=="y":
+#         final_emergency=True
+#     else:
+#         final_emergency=False
+#     if final_emergency==True:
+#         print("Alert ! emergency need to go to the operation now.")
+#         status ="Emergency alert !"
+#         final_patient.append(name+"----"+status)
+#         break
+#     elif patient_age<=18 and final_emergency==False:
+#         print("Please fill the form and need the signature of the guardian/parents. ")
+#         signature=input("Are you willing to admit you child for the treatment.")
+#         if signature.lower()=="yes" or signature.lower()=="y":
+#             temp=True
+#         else:
+#             temp=False
+#         if temp==True:
+#             status="Minor Case(Approved)"
+#             final_patient.append(name+"----"+status)
+#         else:
+#             print("please accept the guidliness and accept the conditons for the operation.")
+#         registration_attempts=registration_attempts-1
+#     elif patient_age>=18 and final_emergency==False:
+#         print("patient is registered for standard consultation.")
+#         status="Minor case"
+#         final_patient.append(name+"----"+status)
+#         break
+#     else:
+#         print("Thank You !")
+# print(final_patient)
+
+
+# def trial(name, age):
+#     result="Welcome to the hosptail me :"+name+" and your age is :"+str(age)+"."
+#     return result
+
+# fin_1=trial("bhanu",20)
+# print(fin_1)
+
+# height=float(input("Enter you hight :"))
+# weight=float(input("Enter you weight :"))
+
+# def logic(height,weight):
+#     bmi=weight/(height*height )
+#     return bmi
+
+# result=logic(height,weight)
+# if result<=18:
+#     print("you are undder risk which is not goood for your health due to you weight is :"+str(result))
+# elif result>=18.5 and result<=24.5:
+#     print ("Your health is good. ")
+# elif result>=25.0:
+#         print("you are over weighted.")
+
+# print(result)
+
+
+# donar_blood=input("What is the blood group of your blood :")
+# reciver_blood="o+"
+# def check(donar_blood,reciver_blood="o+"):
+#     if reciver_blood.lower==donar_blood.lower:
+#         return True
+#     else:
+#         return False
+    
+# result=check(donar_blood,reciver_blood)
+# if result==True:
+#     print("We found the donar")
+# else:
+#     print("sorry we dint found the donar.")
+
+
+
+
+def screen_patient(name, age, height,weight):
+    bmi=weight/(height*height)
+    if bmi<18.0:
+        empty="under weight"
+    elif bmi>=18.5 and bmi<24.5:
+        empty="normal"
     else:
-        final_emergency=False
-    if final_emergency==True:
-        print("Alert ! emergency need to go to the operation now.")
-        status ="Emergency alert !"
-        final_patient.append(name+"----"+status)
-        break
-    elif patient_age<=18 and final_emergency==False:
-        print("Please fill the form and need the signature of the guardian/parents. ")
-        signature=input("Are you willing to admit you child for the treatment.")
-        if signature.lower()=="yes" or signature.lower()=="y":
-            temp=True
-        else:
-            temp=False
-        if temp==True:
-            status="Minor Case(Approved)"
-            final_patient.append(name+"----"+status)
-        else:
-            print("please accept the guidliness and accept the conditons for the operation.")
-        registration_attempts=registration_attempts-1
-    elif patient_age>=18 and final_emergency==False:
-        print("patient is registered for standard consultation.")
-        status="Minor case"
-        final_patient.append(name+"----"+status)
-        break
-    else:
-        print("Thank You !")
+        empty="Over weight"
 
+    report_string="patient "+name+" as an bmi "+str(bmi)+" which is "+str(empty)+"."
+    return report_string
 
-print(final_patient)
+final_reports=[]
+no=int(input("How many patients are there for the bmi :"))
+for i in range (no):
+    print("Enter the "+str(i+1)+" detials.")
+    name=input("Enter your name :")
+    age=int(input("Enter your age :"))
+    weight=float(input("Enter you weight :"))
+    height=float(input("Enter you height :"))
+    result=screen_patient(name,age,height,weight)
+    final_reports.append(result)
 
+for i in range (no):
+    print(""+str(i+1)+". "+str(final_reports[i]))
 
