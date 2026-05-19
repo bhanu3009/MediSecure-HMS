@@ -471,41 +471,91 @@
 #             try:
                 
 
-import datetime
+# import datetime
 
-def process_patient_batch():
-    successful_records = []
+# def process_patient_batch():
+#     successful_records = []
     
-    print("--- Starting Batch Processor ---")
+#     print("--- Starting Batch Processor ---")
     
-    with open("new_patients.txt", "r") as file:
-        for line in file:
-            data_parts = line.strip().split(",")
+#     with open("new_patients.txt", "r") as file:
+#         for line in file:
+#             data_parts = line.strip().split(",")
             
-            if len(data_parts) != 3:
-                continue
+#             if len(data_parts) != 3:
+#                 continue
                 
-            name = data_parts[0]
-            raw_age = data_parts[1]
-            blood_type = data_parts[2]
+#             name = data_parts[0]
+#             raw_age = data_parts[1]
+#             blood_type = data_parts[2]
             
+#             try:
+#                 clean_age = int(raw_age)
+#             except ValueError:
+#                 print(f"⚠️ SKIPPED: Record for '{name}' contains an invalid age ('{raw_age}').")
+#                 continue
+                
+#             patient_data = {
+#                 "patient_name": name,
+#                 "age": clean_age,
+#                 "blood_type": blood_type
+#             }
+            
+#             successful_records.append(patient_data)
+#             print(f"✅ SUCCESS: {name} added to the system.")
+            
+#     now = datetime.datetime.now().strftime("%I:%M %p")
+#     return f"Batch Complete at {now}. Successfully processed {len(successful_records)} records."
+
+# final_report = process_patient_batch()
+# print("\n" + final_report)
+
+
+
+hi=[
+    {
+        "name":"jhanu", 
+        "age":70, 
+        "blood_group":"o+",
+        "is_active":True,
+    },{
+        "name":"bhanu", 
+        "age":80, 
+        "blood_group":"a+",
+        "is_active":True,
+    },{
+        "name":"phanu", 
+        "age":50, 
+        "blood_group":"o-",
+        "is_active":True,
+    },{
+        "name":"thanu", 
+        "age":60, 
+        "blood_group":"ab-",
+        "is_active":True,
+    },{
+        "name":"mhanu", 
+        "age":30, 
+        "blood_group":"b+",
+        "is_active":True,
+    },
+]
+
+def process_senior_admissions(patient_list):
+    try:
+        for i in patient_list:
+            raw_age=i["age"]
+            raw_status=i["is_active"]
             try:
-                clean_age = int(raw_age)
+                clean_age=int(raw_age)
+                if clean_age >60 and raw_status==True:
+                    result=f"the addmited patient name is :{i['name']} and the age is {i['age']}."
+                    with open ("senior_patients.txt","a")as file:
+                        file.write(result+"\n")
+                        print("succesfully appended")
             except ValueError:
-                print(f"⚠️ SKIPPED: Record for '{name}' contains an invalid age ('{raw_age}').")
-                continue
-                
-            patient_data = {
-                "patient_name": name,
-                "age": clean_age,
-                "blood_type": blood_type
-            }
-            
-            successful_records.append(patient_data)
-            print(f"✅ SUCCESS: {name} added to the system.")
-            
-    now = datetime.datetime.now().strftime("%I:%M %p")
-    return f"Batch Complete at {now}. Successfully processed {len(successful_records)} records."
-
-final_report = process_patient_batch()
-print("\n" + final_report)
+                print("you got an error !")
+    except Exception as e:
+        print("critical error !{e}")
+    
+process_senior_admissions(hi)
