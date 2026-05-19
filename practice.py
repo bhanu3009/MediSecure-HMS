@@ -203,11 +203,199 @@
 # for i in range (no):
 #     print(""+str(i+1)+". "+str(final_reports[i]))
 
+ 
 
-patient={
-    "name":"Bhanu", 
-    "age":20,
-    "blood_group":"o+",
-    "phone_number":1002892038,
-}
-print(patient["age"])
+# hi=[
+#     {
+#         "name":"bhanu",
+#         "age":21,
+#         "height":5.9,
+#         "patient":False,
+#         },{
+#         "name":"jhanu",
+#         "age":21,
+#         "height":5.9,
+#         "patient":False,
+#     },]
+# print("yoiuoy"+str(hi[1]))
+
+# name="bhanu prakash"
+# age=10
+# height=5.8
+# rich=False
+# print(f"Welcome {name}. Your age is {age} and your height is {height}. with these qulfiactions you will be {rich}")
+# print(f"{name.capitalize()} welcome to bank of borada in the age of :{age} you are been ")
+
+
+# raw_name = "   bHAnu pRAkaSh   "
+# account_balance = 15450.75
+# clean_name = raw_name.strip().title()
+# receipt_text = f"""
+# ================================
+#        SECUREBANK RECEIPT
+# ================================
+# Account Holder: {clean_name}
+# Current Balance: Rs {account_balance}
+# Status: Active
+# ================================
+# """
+# file_name = "bhanu_statement.txt"
+# with open(file_name, "w") as file:
+#     file.write(receipt_text)
+    
+# # print(f"Success! I just generated '{file_name}' and saved it to your folder.")
+
+# password=input("Enter the password :")
+# with open("password.txt","w") as file:
+#     file.write(password+"\n")
+#     print("success")
+
+# update=input("Enter the phone no that you want to change :")
+# with open("password.txt","a") as file:
+#     file.write(update+"\n")
+#     print("Successfully appended ")
+
+# with open ("password.txt","r") as file:
+#     result=file.read()
+#     print("Scuucessfully opened.")
+
+# print(result)
+
+# name==input("Enter the name :")
+# age=input("Enter the age :")
+# height=input("Enter the height :")
+# rich=False
+
+# with open("new.txt","w")as file:
+#     file.write()
+
+# test="   jOhN dOe, bLooD tYpE o+   "
+# print("plain text :"+test)
+# print("after removing the spaces :"+test.strip())
+# print("after adding captails :"+test.capitalize())
+# print("after making them to lower :"+test.lower())
+# print("after making them to upper :"+test.upper())
+# print("after making them to split :",test.split())
+
+
+# name=input("Enter the name :")
+# age=input("Enter the age :")
+# height=input("Enter the height :")
+# rich=False
+# with open("new.txt","w")as file:
+#     file.write(name+"\n")
+#     file.write(age+"\n")
+#     print("Succesfully wrote the file.")
+
+# # with open("new.txt","a") as file:
+# #     file.write(height+"\n")
+# #     print("Appended sucessuffuly.")
+
+# # with open("new.txt","r") as file:
+# #     result=file.read()
+
+# # print(result)
+
+# # hi=[
+# #     {
+# #         "patient_name":" bHaHu  ",
+# #         "heart_rate":"bad",
+# #         "oxygen_level":" 7758  ",
+# #     },{
+# #         "patient_name":" jHbHu  ",
+# #         "heart_rate":"good",
+# #         "oxygen_level":" 7078  ",
+# #     },{
+# #         "patient_name":" HaHu  ",
+# #         "heart_rate":"good",
+# #         "oxygen_level":" 9778  ",
+# #     }
+# # ]
+
+# # def generate_shift_report(patients){
+# #     test=patients
+# #     text="night_shift_alert.txt"
+# # for i in patients:
+# #     if i["oxygen_level"]<"92" or i["oxygen_level"]>"100":
+# #         result=i.["patient_name"]
+# #         fin=result.strip().upper().split()
+# #         print(f"[fin] requires immediate monitoring. Vitals: HR [], O2 [oxygen_level].")
+# # }
+
+# # hello=generate_shift_report(hi)
+# # print(hello)
+
+
+
+# hi=[
+#     {
+#         "patient_name":" bHaHu  ",
+#         "heart_rate":"bad",
+#         "oxygen_level":" 7758  ",
+#     },{
+#         "patient_name":" jHbHu  ",
+#         "heart_rate":"good",
+#         "oxygen_level":" 7078  ",
+#     },{
+#         "patient_name":" HaHu  ",
+#         "heart_rate":"good",
+#         "oxygen_level":" 9778  ",
+#     }
+# ]
+
+# byee=[
+#     {
+#         "patient_name":" poiubHaHu  ",
+#         "heart_rate":"bad",
+#         "oxygen_level":" 7758  ",
+#     },{
+#         "patient_name":" jHbHu  ",
+#         "heart_rate":"good",
+#         "oxygen_level":" 7078  ",
+#     },{
+#         "patient_name":" HaHu  ",
+#         "heart_rate":"good",
+#         "oxygen_level":" 9778  ",
+#     }
+# ]
+
+# for i in hi:
+#    result=i["patient_name"]
+#    print(result)
+
+# print(hi[1]["patient_name"])
+
+# print(tam)
+
+
+hi=[
+    {
+        "patient_name":"  BhanU ",
+        "heart_rate": 78,
+        "oxygen_level":66,
+    },{
+        "patient_name":"  rhanU ",
+        "heart_rate":99,
+        "oxygen_level":33,
+    },{
+        "patient_name":"  hhanU ",
+        "heart_rate":55,
+        "oxygen_level":88,
+    },{
+        "patient_name":"  phanU ",
+        "heart_rate":66,
+        "oxygen_level":80,
+    },
+]
+
+def generate_shift_report(list_of_patients):
+    with open("night_shift_alert.txt","w") as file:
+        for i in list_of_patients:
+            if i["oxygen_level"] < 92 or i["heart_rate"] > 100:
+                clean=i["patient_name"].strip().title()
+                alert=f"{clean} needs imediate mointiing because the heartrate is:{i['heart_rate']} and the oxygen_level is:{i['oxygen_level']}.\n" 
+                file.write(alert)
+    
+    print("Success: night_shift_alert.txt has been generated!")
+
+generate_shift_report(hi)
