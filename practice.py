@@ -368,34 +368,144 @@
 # print(tam)
 
 
-hi=[
-    {
-        "patient_name":"  BhanU ",
-        "heart_rate": 78,
-        "oxygen_level":66,
-    },{
-        "patient_name":"  rhanU ",
-        "heart_rate":99,
-        "oxygen_level":33,
-    },{
-        "patient_name":"  hhanU ",
-        "heart_rate":55,
-        "oxygen_level":88,
-    },{
-        "patient_name":"  phanU ",
-        "heart_rate":66,
-        "oxygen_level":80,
-    },
-]
 
-def generate_shift_report(list_of_patients):
-    with open("night_shift_alert.txt","w") as file:
-        for i in list_of_patients:
-            if i["oxygen_level"] < 92 or i["heart_rate"] > 100:
-                clean=i["patient_name"].strip().title()
-                alert=f"{clean} needs imediate mointiing because the heartrate is:{i['heart_rate']} and the oxygen_level is:{i['oxygen_level']}.\n" 
-                file.write(alert)
+
+# hi=[
+#     {
+#         "patient_name":"  BhanU ",
+#         "heart_rate": 78,
+#         "oxygen_level":66,
+#     },{
+#         "patient_name":"  rhanU ",
+#         "heart_rate":99,
+#         "oxygen_level":33,
+#     },{
+#         "patient_name":"  hhanU ",
+#         "heart_rate":55,
+#         "oxygen_level":88,
+#     },{
+#         "patient_name":"  phanU ",
+#         "heart_rate":66,
+#         "oxygen_level":80,
+#     },
+# ]
+
+# def generate_shift_report(list_of_patients):
+#     with open("night_shift_alert.txt","w") as file:
+#         for i in list_of_patients:
+#             if i["oxygen_level"] < 92 or i["heart_rate"] > 100:
+#                 clean=i["patient_name"].strip().title()
+#                 alert=f"{clean} needs imediate mointiing because the heartrate is:{i['heart_rate']} and the oxygen_level is:{i['oxygen_level']}.\n" 
+#                 file.write(alert)
     
-    print("Success: night_shift_alert.txt has been generated!")
+#     print("Success: night_shift_alert.txt has been generated!")
+# generate_shift_report(hi)
 
-generate_shift_report(hi)
+# print("try catch error :")
+# try:
+#     no=int(input("Enter the no that you want to div :"))
+#     div=int(input("Enter the no that you want to diviable with :"))
+#     result=no/div
+#     print(result)
+# except ZeroDivisionError:
+#     print("you are getting an error :")
+# finally:
+#     print("You have successfully divided.")
+
+# import datetime
+# now=datetime.datetimenow()
+# print(now)
+# reult=now.strftime()
+
+# import os
+# import random
+# import datetime
+# print("otp generator !")
+# otp=random.randint(10000,99999)
+# print(f"your otp is {otp}")
+# result=int(input("Enter the otp :"))
+# if result!=otp:
+#     print("Your otp is invalied !")
+# else:
+#     print("your otp is correct.")
+#     print("the transaction is been done at ",datetime.datetime.now())
+
+
+# name=input("Enter the name :")
+# age=input("Enter the age :")
+# height=input("Enter the height :")
+# rich=False
+# with open("new.txt","w")as file:
+#     file.write(name+"\n")
+#     file.write(age+"\n")
+#     print("Succesfully wrote the file.")
+
+# # with open("new.txt","a") as file:
+# #     file.write(height+"\n")
+# #     print("Appended sucessuffuly.")
+
+# # with open("new.txt","r") as file:
+# #     result=file.read()
+
+# # print(result)
+
+
+# import datetime
+# name=input("Enter the name :")
+# age=input("Enter the age :")
+# blood_type=input("Enter the blood type :")
+# rich=False
+# with open("new_patients.txt","w")as file:
+#     file.write(name+"\n")
+#     file.write(age+"\n")
+#     file.write(blood_type+"\n")
+#     print("Succesfully wrote in the file. ")
+
+# def process_patient_batch(x):
+#     successful_records=[]
+#     with open("new_patients.txt","r") as file:
+#         for i in x:
+#             last_name=name.capitalize().split().title()
+#             last_age=age.capitalize().split().title()
+#             last_blood=blood_type.capitalize().split().title()
+#             try:
+                
+
+import datetime
+
+def process_patient_batch():
+    successful_records = []
+    
+    print("--- Starting Batch Processor ---")
+    
+    with open("new_patients.txt", "r") as file:
+        for line in file:
+            data_parts = line.strip().split(",")
+            
+            if len(data_parts) != 3:
+                continue
+                
+            name = data_parts[0]
+            raw_age = data_parts[1]
+            blood_type = data_parts[2]
+            
+            try:
+                clean_age = int(raw_age)
+            except ValueError:
+                print(f"⚠️ SKIPPED: Record for '{name}' contains an invalid age ('{raw_age}').")
+                continue
+                
+            patient_data = {
+                "patient_name": name,
+                "age": clean_age,
+                "blood_type": blood_type
+            }
+            
+            successful_records.append(patient_data)
+            print(f"✅ SUCCESS: {name} added to the system.")
+            
+    now = datetime.datetime.now().strftime("%I:%M %p")
+    return f"Batch Complete at {now}. Successfully processed {len(successful_records)} records."
+
+final_report = process_patient_batch()
+print("\n" + final_report)
