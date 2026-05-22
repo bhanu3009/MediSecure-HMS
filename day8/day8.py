@@ -1,4 +1,3 @@
-
 class patient:
     def __init__(self,name,age,blood_group,issue):
         self.name=name
@@ -14,6 +13,7 @@ class doctor:
 
     def tretment(self,target_patient):
         print(f"🩺 Dr. {self.name} is treating patient {target_patient.name} for {target_patient.issue}.")
+
 
 pat_no=int(input("Enter how many patients are there for the treatment :"))
 doc_no=int(input("Enter how many doctors are there for the service :"))

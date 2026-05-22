@@ -579,46 +579,117 @@
 # two=book("raka","atteli",10000000)
 # two.info()
 
+# class patient:
+#     def __init__(self,name,age,blood_group,issue):
+#         self.name=name
+#         self.age=age
+#         self.blood_group=blood_group
+#         self.issue=issue
+
+# class doctor:
+#     def __init__(self,name,specialization,consultation_fee):
+#         self.name=name
+#         self.specialization=specialization
+#         self.consultation_fee=consultation_fee
+
+#     def tretment(self,target_patient):
+#         print(f"🩺 Dr. {self.name} is treating patient {target_patient.name} for {target_patient.issue}.")
+
+# pat_no=int(input("Enter how many patients are there for the treatment :"))
+# doc_no=int(input("Enter how many doctors are there for the service :"))
+# final_patient_list=[]
+# for i in range(pat_no):
+#     pat_name=input("Enter your name :")
+#     age=int(input("Enter your age :"))
+#     blood_group=input("Enter your blood_group :")
+#     issue=input("Enter the isseues that you are facing :")
+#     pat=patient(pat_name,age,blood_group,issue)
+#     final_patient_list.append(pat)
+
+# final_doc_list=[]
+# for i in range(doc_no):
+#     doc_name=input("Enter your name :")
+#     specialization=input("Enter your specialization :")
+#     consultation_fee=input("Enter your consultation_fee :")
+#     doc=doctor(doc_name,specialization,consultation_fee)
+#     final_doc_list.append(doc)
+
+
+# print(f"\nThe final patients are: {final_patient_list}")
+# print(f"The final doctors are: {final_doc_list}\n")
+
+# attending_doctor = final_doc_list[0]
+
+# for i in final_patient_list:
+#     attending_doctor.tretment(i)
+
+# import json
+# hi ={
+#         "name":"Bhanu",
+#         "age":21,
+#         "height":3.1,
+#         "Weight":55,
+#         "employee":None
+#     }
+# bye='{"name":"jhanu","age":61, "height":6.1,"Weight":5.5,"employee":null,"income":false}'
+# result=json.loads(bye)
+# print(type(result))
+# # hi=json.dumps(hi)
+# print(type(hi))
+
+
+# import json
+# import requests
+# final=requests.get('https://jsonplaceholder.typicode.com/users')
+# temp=final.json()
+# print(temp)
+
+
+import requests
+import json
 class patient:
-    def __init__(self,name,age,blood_group,issue):
+    def __init__(self,name,email,city):
         self.name=name
-        self.age=age
-        self.blood_group=blood_group
-        self.issue=issue
+        self.email=email
+        self.city=city
 
-class doctor:
-    def __init__(self,name,specialization,consultation_fee):
-        self.name=name
-        self.specialization=specialization
-        self.consultation_fee=consultation_fee
+def sync_external_patients():
+    try:
+        temp=requests.get('jsonplaceholder.typicode.com/users')
+        temp3=temp.json()
+        print("successfuly imported the things ")
 
-    def tretment(self,target_patient):
-        print(f"🩺 Dr. {self.name} is treating patient {target_patient.name} for {target_patient.issue}.")
+        successfully_imported=[];
+        for i in temp3:
+            try:
+                raw_name=i["name"]
+                raw_email=i["email"].lower()
+                raw_city=i["city"]["address"]
+        
+                if " " in raw_name:
+                    new_patient=patient(raw_name,raw_email,raw_city)
+                    successfully_imported.append(new_patient)
+            except Exception as e:
+                print(f"Skipping a user due to missing data: {e}")
 
-pat_no=int(input("Enter how many patients are there for the treatment :"))
-doc_no=int(input("Enter how many doctors are there for the service :"))
-final_patient_list=[]
-for i in range(pat_no):
-    pat_name=input("Enter your name :")
-    age=int(input("Enter your age :"))
-    blood_group=input("Enter your blood_group :")
-    issue=input("Enter the isseues that you are facing :")
-    pat=patient(pat_name,age,blood_group,issue)
-    final_patient_list.append(pat)
+        temp_1=[0]
+        for i in successfully_imported:
+            strcutured={
+                "patient_name":i.name,
+                "contact":i.email,
+                "location":i.city
+                }
+            temp_1.append(strcutured)
 
-final_doc_list=[]
-for i in range(doc_no):
-    doc_name=input("Enter your name :")
-    specialization=input("Enter your specialization :")
-    consultation_fee=input("Enter your consultation_fee :")
-    doc=doctor(doc_name,specialization,consultation_fee)
-    final_doc_list.append(doc)
+            temp2=json.dump(temp_1,index=3)
 
+            with open("good_json_file.json","w") as file:
+                file.write(temp2)
+                print("Successfully appended the file .")
 
-print(f"\nThe final patients are: {final_patient_list}")
-print(f"The final doctors are: {final_doc_list}\n")
+    except requests.exceptions.RequestException as e:
+                print(f"Network Error: Could not connect to the API. {e}")
+    except Exception as e:
+                print(f"Critical System Error: {e}")
 
-attending_doctor = final_doc_list[0]
-
-for i in final_patient_list:
-    attending_doctor.tretment(i)
+sync_external_patients()
