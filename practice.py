@@ -512,50 +512,113 @@
 
 
 
-hi=[
-    {
-        "name":"jhanu", 
-        "age":70, 
-        "blood_group":"o+",
-        "is_active":True,
-    },{
-        "name":"bhanu", 
-        "age":80, 
-        "blood_group":"a+",
-        "is_active":True,
-    },{
-        "name":"phanu", 
-        "age":50, 
-        "blood_group":"o-",
-        "is_active":True,
-    },{
-        "name":"thanu", 
-        "age":60, 
-        "blood_group":"ab-",
-        "is_active":True,
-    },{
-        "name":"mhanu", 
-        "age":30, 
-        "blood_group":"b+",
-        "is_active":True,
-    },
-]
+# hi=[
+#     {
+#         "name":"jhanu", 
+#         "age":70, 
+#         "blood_group":"o+",
+#         "is_active":True,
+#     },{
+#         "name":"bhanu", 
+#         "age":80, 
+#         "blood_group":"a+",
+#         "is_active":True,
+#     },{
+#         "name":"phanu", 
+#         "age":50, 
+#         "blood_group":"o-",
+#         "is_active":True,
+#     },{
+#         "name":"thanu", 
+#         "age":60, 
+#         "blood_group":"ab-",
+#         "is_active":True,
+#     },{
+#         "name":"mhanu", 
+#         "age":30, 
+#         "blood_group":"b+",
+#         "is_active":True,
+#     },
+# ]
 
-def process_senior_admissions(patient_list):
-    try:
-        for i in patient_list:
-            raw_age=i["age"]
-            raw_status=i["is_active"]
-            try:
-                clean_age=int(raw_age)
-                if clean_age >60 and raw_status==True:
-                    result=f"the addmited patient name is :{i['name']} and the age is {i['age']}."
-                    with open ("senior_patients.txt","a")as file:
-                        file.write(result+"\n")
-                        print("succesfully appended")
-            except ValueError:
-                print("you got an error !")
-    except Exception as e:
-        print("critical error !{e}")
+# def process_senior_admissions(patient_list):
+#     try:
+#         for i in patient_list:
+#             raw_age=i["age"]
+#             raw_status=i["is_active"]
+#             try:
+#                 clean_age=int(raw_age)
+#                 if clean_age >60 and raw_status==True:
+#                     result=f"the addmited patient name is :{i['name']} and the age is {i['age']}."
+#                     with open ("senior_patients.txt","a")as file:
+#                         file.write(result+"\n")
+#                         print("succesfully appended")
+#             except ValueError:
+#                 print("you got an error !")
+#     except Exception as e:
+#         print("critical error !{e}")
     
-process_senior_admissions(hi)
+# process_senior_admissions(hi)
+
+
+# class book:
+#     def __init__(self,tittle,author,page_count):
+#         self.tittle=tittle
+#         self.author=author
+#         self.page_count=page_count
+
+#     def info(self):
+#         print(f"The name of the book is {self.tittle}. The authour is {self.author} and the no of pages is :{self.page_count}.")
+
+#     def byee():
+#         print("im from the byee :")
+
+
+# one=book("bahubail","rajamouli",100000)
+# one.info()
+# two=book("raka","atteli",10000000)
+# two.info()
+
+class patient:
+    def __init__(self,name,age,blood_group,issue):
+        self.name=name
+        self.age=age
+        self.blood_group=blood_group
+        self.issue=issue
+
+class doctor:
+    def __init__(self,name,specialization,consultation_fee):
+        self.name=name
+        self.specialization=specialization
+        self.consultation_fee=consultation_fee
+
+    def tretment(self,target_patient):
+        print(f"🩺 Dr. {self.name} is treating patient {target_patient.name} for {target_patient.issue}.")
+
+pat_no=int(input("Enter how many patients are there for the treatment :"))
+doc_no=int(input("Enter how many doctors are there for the service :"))
+final_patient_list=[]
+for i in range(pat_no):
+    pat_name=input("Enter your name :")
+    age=int(input("Enter your age :"))
+    blood_group=input("Enter your blood_group :")
+    issue=input("Enter the isseues that you are facing :")
+    pat=patient(pat_name,age,blood_group,issue)
+    final_patient_list.append(pat)
+
+final_doc_list=[]
+for i in range(doc_no):
+    doc_name=input("Enter your name :")
+    specialization=input("Enter your specialization :")
+    consultation_fee=input("Enter your consultation_fee :")
+    doc=doctor(doc_name,specialization,consultation_fee)
+    final_doc_list.append(doc)
+
+
+print(f"\nThe final patients are: {final_patient_list}")
+print(f"The final doctors are: {final_doc_list}\n")
+
+attending_doctor = final_doc_list[0]
+
+for i in final_patient_list:
+    attending_doctor.tretment(i)
