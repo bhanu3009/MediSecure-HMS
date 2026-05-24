@@ -23,7 +23,7 @@ def sync_external_patients():
                     new_patient=patient(raw_name,raw_email,raw_city)
                     successfully_imported.append(new_patient)
             except Exception as e:
-                print(f"Skipping a user due to missing data: {e}")
+                print(f"Skipping a user due to missing data:{e}")
 
         temp_1=[0]
         for i in successfully_imported:
