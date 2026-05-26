@@ -7,7 +7,7 @@ class Patient():
         self.insurance_status=insurance_status
 
 async def fetch_internal_db():
-    print(f"The process has been started.")
+    print(f"The fetch_internal_db process has been started.")
     await asyncio.sleep(3)
     return[
         {
@@ -26,16 +26,17 @@ async def fetch_internal_db():
     ]
 
 async def fetch_insurance_api():
-    print(f"Another process started.")
+    print(f"Another fetch_insurance_api process started.")
     await asyncio.sleep(3)
     raw_json='[{"patient_id":4001,"name":"durga","insurance_status":false},{"patient_id":5001,"name":"jhanu","insurance_status":true}]'
     result=json.loads(raw_json)
     return result
 
 async def compile_hospital_records():
-
+    print(f"Another compile_hospital_records process started.")
     db_results,api_results=await asyncio.gather(fetch_internal_db(),fetch_insurance_api())
     comibined_list=db_results+api_results
+    print(f" The combine lis is :{comibined_list}")
 
     verified_patients=[]
     for i in comibined_list:
@@ -45,7 +46,6 @@ async def compile_hospital_records():
                 verified_patients.append(new_pat)
         except Exception as e:
             print(f"you got an error {e}")
-
 
     final_list=[]
     for obj in verified_patients:
