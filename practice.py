@@ -805,3 +805,152 @@
 
 # asyncio.run(compile_hospital_records())
 
+# import requests
+
+# URL="https://jsonplaceholder.typicode.com"
+# def get():
+#     print("step 1:---------")
+#     print("Fetching data...........")
+#     responce=requests.get(f"{URL}/users/1")
+#     if responce.status_code==200:
+#         data=responce.json()
+#         print(f"Successfully converted the data into dictornary.")
+#     else:
+#         print(f"you got an error :{responce.status_code}")
+
+# def post():
+#     print("Step 2:-------------")
+#     print("creating data_---------")
+#     data_patient={
+#         "name":"Bhanu",
+#         "age":44,
+#         "height":4.3,
+#         "status":True
+#     }
+#     responce=requests.post(f"{URL}/users/1",json=data_patient)
+#     if responce.status_code==201:
+#         data=responce.json()
+#         print(f"✅ Success! Record updated. New Name: {data['name']}")
+#     else:
+#         print(f"Got an error in {responce.status_code}")
+
+# def put():
+#     print("Step 3:-------------")
+#     print("Updating data_---------")
+#     updated_data={
+#         "name":"Bhanu Prakash (Updated)",
+#         "status":"Ready for Discharge"
+#     }
+#     responce=requests.put(f"{URL}/users/1",updated_data)
+#     if responce.status_code == 201:
+#         data=responce.json()
+#         print(f"Success! Record updated. New Name: {data['name']}")
+#     else:
+#         print(f"Failed. Kitchen sent Error Code: {responce.status_code}")
+
+# def delete():
+#     print("Step 4:-------------")
+#     print("Delete data_---------")
+#     responce=requests.delete(f"{URL}/users/1")
+#     if responce.status_code in [200,204]:
+#         print(f"Success! Patient record completely erased from database.")
+#     else:
+#         print(f"Failed. Kitchen sent Error Code: {responce.status_code}")
+
+# if __name__ == "__main__":
+#     print("🚀 Booting up API Network Pipeline...")
+#     get()
+#     post()
+#     put()
+#     delete()
+#     print("\n🏁 All network operations completed safely!")
+
+
+
+# import requests
+# URL="https://jsonplaceholder.typicode.com/posts"
+
+# responce=requests.get(URL)
+
+# if requests.status_codes==200:
+#     data=responce.json()
+#     print(f"You data is :{data}")
+# else:
+#     print(f"u got an error !{responce.status_code}")
+
+# class LabTechnician ():
+#     def __init__(self,tech_id,name,hospital_base):
+#         self.tech_id=tech_id
+#         self.name=name
+#         self.hospital_base=hospital_base
+
+# def sync_lab_technicians():
+#     try:
+#         responce=requests.get("https://jsonplaceholder.typicode.com/users")
+#         if responce==200:
+#             data=responce.json()
+#             authorized_techs=[]
+#             for i in data:
+#                 technician_id=i.get("id")
+#                 name=i.get("name")
+#                 cleaned_name=name.strip().title()
+#                 hospital_base = user.get("company",{}).get("name","Unknown Base")
+
+#         elif responce==404:
+#             print("Registry API Offline.")
+#         else:
+#             print(f"Critical warining !")
+#             return "Error !"
+#     except as except (e):
+#         print(f"Critical error in the process !{e}")
+
+
+
+import requests
+from datetime import datetime
+class LabTechnician:
+    def __init__(self,tech_id,name,hospital_base):
+        self.tech_id=tech_id
+        self.name=name
+        self.hospital_base=hospital_base
+
+def sync_lab_technicians():
+    try:
+        response=requests.get("https://jsonplaceholder.typicode.com/users")
+        
+        if response.status_code==200:
+            data=response.json()
+            authorized_techs=[]
+            
+            for i in data:
+                technician_id=i.get("id")
+                name=i.get("name","Unknown")
+                cleaned_name=name.strip().title()
+                hospital_base=i.get("company",{}).get("name","Unknown Base")
+                new_tech=LabTechnician(technician_id,cleaned_name,hospital_base)
+                authorized_techs.append(new_tech)
+                print(f"Registered Tech #{new_tech.tech_id}:{new_tech.name}(Base:{new_tech.hospital_base})")
+            
+            with open("registry_sync_log.txt", "a") as file:
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                file.write(f"[{timestamp}] - HTTP 200 OK - Successfully synced {len(authorized_techs)} technicians.\n")
+            
+            print(f"\n⚙️ Sync Complete! Loaded {len(authorized_techs)} technicians into the system.")
+            return authorized_techs
+            
+        elif response.status_code == 404:
+            print("\033[91m🚨 Registry API Offline.\033[0m")
+            
+        else:
+            print(f"⚠️ Critical warning! Unhandled status code: {response.status_code}")
+            return "Error !"
+            
+    except Exception as e:
+        print(f"🚨 Critical error in the process! {e}")
+
+if __name__ == "__main__":
+    active_tech_roster = sync_lab_technicians()
+
+
+
+    
