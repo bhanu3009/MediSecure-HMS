@@ -17,7 +17,7 @@ async def check_system_health():
     except FileNotFoundError:
         db_status="Offline-Config Missing"
 
-        current_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     return{
         "system_name":"MediSecure Backend",
