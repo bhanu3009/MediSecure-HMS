@@ -12,7 +12,7 @@ async def check_system_health():
     log_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     try:
-        with open("system_config.txt","r")as file:
+        with open("system_config.txt", "r")as file:
             config_text=file.read().strip()
         system_mode="ACTIVE" if config_text=="ACTIVE" else "Degraded"
     except FileNotFoundError:
@@ -39,3 +39,4 @@ async def check_system_health():
         "timestamp":log_time
     }
 app.include_router(patient_router.router,prefix="/api/patients",tags=["Patients"])
+
