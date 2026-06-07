@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 class PatientCreate(BaseModel):
     name: str
-    email: str       # <-- This was missing!
+    email: str     
     phone: str
     age: int
     gender: str

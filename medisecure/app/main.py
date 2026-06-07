@@ -3,8 +3,11 @@ from datetime import datetime
 from fastapi import FastAPI
 from sqlalchemy import text
 from app.config.database import SessionLocal
+from app.config.database import Base, engine
 
 app=FastAPI(title="MediSecure Backend")
+
+Base.metadata.create_all(bind=engine)
 
 @app.get("/api/health")
 async def check_system_health():
@@ -12,7 +15,7 @@ async def check_system_health():
     log_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     try:
-        with open("system_config.txt", "r")as file:
+        with open("system_config.txt","r")as file:
             config_text=file.read().strip()
         system_mode="ACTIVE" if config_text=="ACTIVE" else "Degraded"
     except FileNotFoundError:
