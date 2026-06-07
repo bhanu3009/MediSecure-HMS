@@ -1,4 +1,5 @@
 from fastapi import APIRouter,Depends,HTTPException
+from app.schemas.patient import PatientCreate,PatientUpdate
 from sqlalchemy.orm import Session
 from datetime import datetime 
 from app.schemas.patient import PatientCreate
@@ -45,3 +46,33 @@ def create_patient(patient_data:PatientCreate,db:Session=Depends(get_db)):
         }
     except Exception as e:
         return {"error": f"Database Error: {str(e)}"}
+    
+
+@router.put('/{patient_id}')
+def update_patient(patient_id:int,update_data:PatientUpdate,db:Session=Depends(get_db)):
+    patient_folder=db.query(Patient).filter(Patient.id == patient_id).first()
+    
+    if not patient_folder:
+        raise HTTPException(status_code=404,detail="Patient not found.")
+    
+    patient_folder.email=update_data.email.lower()
+    patient_folder.phone=update_data.phone
+    
+    db.commit()
+    db.refresh(patient_folder)
+    
+    return {
+        "message": "Patient contact info successfully updated!",
+        "data": patient_folder
+    }
+
+@router.delete('/{patient_id}')
+def delete_patient(patient_id: int, db: Session = Depends(get_db)):
+    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
+
+    if not patient_folder:
+        raise HTTPException(status_code=404, detail="Patient not found.")
+    
+    db.delete(patient_folder)
+    db.commit() 
+    return {"message": "Patient record permanently deleted."}
