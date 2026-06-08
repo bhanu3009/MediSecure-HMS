@@ -7,6 +7,24 @@
 </head>
 <body>
     <h1>Welcome to {{ hospital_name }}</h1>
+
+    <h2>Register New Patient</h2>
+    <form action="/api/patients/web/add" method="POST">
+        <label>Name:</label>
+        <input type="text" name="name" required>
+        
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        
+        <label>Phone:</label>
+        <input type="text" name="phone" required>
+        
+        <button type="submit">Register Patient</button>
+    </form>
+    <br>
+    
+    <table border="1">
+
     <table border="1">
         <tr>
             <th>ID</th>

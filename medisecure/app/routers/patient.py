@@ -1,4 +1,6 @@
-from fastapi import APIRouter,Depends,HTTPException,Request
+from fastapi import APIRouter,Depends,HTTPException,Request,Form
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 from app.schemas.patient import PatientCreate,PatientUpdate
 from sqlalchemy.orm import Session
 from datetime import datetime 
@@ -22,6 +24,26 @@ def show_patient_webpage(request: Request, db: Session = Depends(get_db)):
             "patients": all_patients
         }
     )
+
+
+@router.post('/web/add', include_in_schema=False)
+def add_patient_from_web(
+    name: str = Form(...), 
+    email: str = Form(...), 
+    phone: str = Form(...), 
+    db: Session = Depends(get_db)
+):
+    new_patient = Patient(
+        name=name, 
+        email=email.lower(), 
+        phone=phone,
+        age=0,              
+        gender="Unknown"     
+    )
+    
+    db.add(new_patient)
+    db.commit()
+    return RedirectResponse(url="/api/patients/web", status_code=303)
 
 @router.get('/')
 def get_all_patients(db:Session=Depends(get_db)):
