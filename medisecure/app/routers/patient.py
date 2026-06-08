@@ -1,20 +1,35 @@
-from fastapi import APIRouter,Depends,HTTPException
+from fastapi import APIRouter,Depends,HTTPException,Request
 from app.schemas.patient import PatientCreate,PatientUpdate
 from sqlalchemy.orm import Session
 from datetime import datetime 
+from fastapi.templating import Jinja2Templates
 from app.schemas.patient import PatientCreate
 from app.models.patient import Patient
 from app.config.database import get_db
 
 router = APIRouter()
 
+templates = Jinja2Templates(directory="app/templates")
+
+@router.get('/web', include_in_schema=False)
+def show_patient_webpage(request: Request, db: Session = Depends(get_db)):
+    all_patients = db.query(Patient).all()
+    return templates.TemplateResponse(
+        request=request, 
+        name="patient_list.html", 
+        context={
+            "hospital_name": "MediSecure Main Branch", 
+            "patients": all_patients
+        }
+    )
+
 @router.get('/')
 def get_all_patients(db:Session=Depends(get_db)):
     all_patients=db.query(Patient).all()
-    return {
+    return{
         "message": "Hospital roster successfully retrieved!",
-        "total_patients": len(all_patients),
-        "data": all_patients
+        "total_patients":len(all_patients),
+        "data":all_patients
     }
 
 @router.get('/{patient_id}')
@@ -76,3 +91,5 @@ def delete_patient(patient_id: int, db: Session = Depends(get_db)):
     db.delete(patient_folder)
     db.commit() 
     return {"message": "Patient record permanently deleted."}
+
+
