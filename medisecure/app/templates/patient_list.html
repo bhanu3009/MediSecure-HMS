@@ -8,6 +8,33 @@
 <body>
     <h1>Welcome to {{ hospital_name }}</h1>
 
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        {% for patient in patients %}
+        <tr>
+            <td>{{ patient.id }}</td>
+            <td>{{ patient.name }}</td>
+            <td>{{ patient.email }}</td>
+            <td>{{ patient.phone }}</td>
+            <td>
+                <a href="/api/patients/web/{{ patient.id }}/edit">Edit</a> | 
+                
+                <form action="/api/patients/web/{{ patient.id }}/delete" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br><hr><br>
+
     <h2>Register New Patient</h2>
     <form action="/api/patients/web/add" method="POST">
         <label>Name:</label>
@@ -21,25 +48,6 @@
         
         <button type="submit">Register Patient</button>
     </form>
-    <br>
     
-    <table border="1">
-
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-        </tr>
-        {% for patient in patients %}
-        <tr>
-            <td>{{ patient.id }}</td>
-            <td>{{ patient.name }}</td>
-            <td>{{ patient.email }}</td>
-            <td>{{ patient.phone }}</td>
-        </tr>
-        {% endfor %}
-    </table>
 </body>
 </html>

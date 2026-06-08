@@ -45,6 +45,46 @@ def add_patient_from_web(
     db.commit()
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
+
+@router.post('/web/{patient_id}/delete', include_in_schema=False)
+def delete_patient_web(patient_id: int, db: Session = Depends(get_db)):
+    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
+    
+    if patient_folder:
+        db.delete(patient_folder)
+        db.commit()
+        
+    return RedirectResponse(url="/api/patients/web", status_code=303)
+
+
+@router.get('/web/{patient_id}/edit', include_in_schema=False)
+def show_edit_page(patient_id: int, request: Request, db: Session = Depends(get_db)):
+    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
+    
+    return templates.TemplateResponse(
+        request=request, 
+        name="patient_edit.html", 
+        context={"patient": patient_folder}
+    )
+
+
+@router.post('/web/{patient_id}/edit', include_in_schema=False)
+def update_patient_web(
+    patient_id: int, 
+    email: str = Form(...), 
+    phone: str = Form(...), 
+    db: Session = Depends(get_db)
+):
+    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
+    
+    if patient_folder:
+        patient_folder.email = email.lower()
+        patient_folder.phone = phone
+        db.commit()
+        
+    return RedirectResponse(url="/api/patients/web", status_code=303)
+
+
 @router.get('/')
 def get_all_patients(db:Session=Depends(get_db)):
     all_patients=db.query(Patient).all()

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Patient</title>
+</head>
+<body>
+    <h1>Edit Patient: {{ patient.name }}</h1>
+    
+    <form action="/api/patients/web/{{ patient.id }}/edit" method="POST">
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ patient.email }}" required>
+        <br><br>
+        
+        <label>Phone:</label>
+        <input type="text" name="phone" value="{{ patient.phone }}" required>
+        <br><br>
+        
+        <button type="submit">Save Changes</button>
+    </form>
+    
+    <br>
+    <a href="/api/patients/web">Cancel & Go Back</a>
+</body>
+</html>
