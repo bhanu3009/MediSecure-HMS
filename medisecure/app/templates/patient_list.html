@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Roster</title>
-</head>
-<body>
-    <h1>Welcome to {{ hospital_name }}</h1>
+{% extends "base.html" %}
 
-    <table border="1">
+{% block content %}
+    
+    <h2>Patient Roster</h2>
+    <table>
         <tr>
             <th>ID</th>
             <th>Name</th>
@@ -23,17 +18,16 @@
             <td>{{ patient.email }}</td>
             <td>{{ patient.phone }}</td>
             <td>
-                <a href="/api/patients/web/{{ patient.id }}/edit">Edit</a> | 
-                
+                <a href="/api/patients/web/{{ patient.id }}/edit" style="text-decoration:none; color:#3498db; font-weight:bold;">Edit</a> | 
                 <form action="/api/patients/web/{{ patient.id }}/delete" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
+                    <button type="submit" style="background-color:#e74c3c;">Delete</button>
                 </form>
             </td>
         </tr>
         {% endfor %}
     </table>
 
-    <br><hr><br>
+    <hr>
 
     <h2>Register New Patient</h2>
     <form action="/api/patients/web/add" method="POST">
@@ -48,6 +42,5 @@
         
         <button type="submit">Register Patient</button>
     </form>
-    
-</body>
-</html>
+
+{% endblock %}

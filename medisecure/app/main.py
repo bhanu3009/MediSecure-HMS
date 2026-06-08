@@ -4,8 +4,11 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from app.config.database import SessionLocal
 from app.config.database import Base, engine
+from fastapi.staticfiles import StaticFiles
 
 app=FastAPI(title="MediSecure Backend")
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 Base.metadata.create_all(bind=engine)
 

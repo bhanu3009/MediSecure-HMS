@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Patient</title>
-</head>
-<body>
-    <h1>Edit Patient: {{ patient.name }}</h1>
+{% extends "base.html" %}
+
+{% block content %}
+    
+    <h2>Edit Patient: {{ patient.name }}</h2>
     
     <form action="/api/patients/web/{{ patient.id }}/edit" method="POST">
         <label>Email:</label>
@@ -17,9 +14,7 @@
         <br><br>
         
         <button type="submit">Save Changes</button>
+        <a href="/api/patients/web" style="margin-left: 15px; color: #7f8c8d; text-decoration: none;">Cancel</a>
     </form>
-    
-    <br>
-    <a href="/api/patients/web">Cancel & Go Back</a>
-</body>
-</html>
+
+{% endblock %}
