@@ -8,20 +8,24 @@ from fastapi.templating import Jinja2Templates
 from app.schemas.patient import PatientCreate
 from app.models.patient import Patient
 from app.config.database import get_db
+from app.models.doctor_model import Doctor
 
 router = APIRouter()
 
 templates = Jinja2Templates(directory="app/templates")
 
 @router.get('/web', include_in_schema=False)
-def show_patient_webpage(request: Request, db: Session = Depends(get_db)):
-    all_patients = db.query(Patient).all()
+def show_patient_webpage(request:Request,db:Session=Depends(get_db)):
+    all_patients=db.query(Patient).all()
+    all_doctors=db.query(Doctor).all() 
+    
     return templates.TemplateResponse(
         request=request, 
         name="patient_list.html", 
         context={
-            "hospital_name": "MediSecure Main Branch", 
-            "patients": all_patients
+            "hospital_name":"MediSecure Main Branch", 
+            "patients":all_patients,
+            "doctors":all_doctors 
         }
     )
 
@@ -31,6 +35,7 @@ def add_patient_from_web(
     name: str = Form(...), 
     email: str = Form(...), 
     phone: str = Form(...), 
+    primary_doctor_id:int=Form(...),
     db: Session = Depends(get_db)
 ):
     new_patient = Patient(
@@ -38,7 +43,8 @@ def add_patient_from_web(
         email=email.lower(), 
         phone=phone,
         age=0,              
-        gender="Unknown"     
+        gender="Unknown",
+        primary_doctor_id=primary_doctor_id,
     )
     
     db.add(new_patient)

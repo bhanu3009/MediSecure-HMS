@@ -9,6 +9,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Doctor</th>
             <th>Actions</th>
         </tr>
         {% for patient in patients %}
@@ -17,6 +18,9 @@
             <td>{{ patient.name }}</td>
             <td>{{ patient.email }}</td>
             <td>{{ patient.phone }}</td>
+            
+            <td>{{ patient.doctor.name if patient.doctor else "Unassigned" }}</td>
+
             <td>
                 <a href="/api/patients/web/{{ patient.id }}/edit" style="text-decoration:none; color:#3498db; font-weight:bold;">Edit</a> | 
                 <form action="/api/patients/web/{{ patient.id }}/delete" method="POST" style="display:inline;">
@@ -39,6 +43,15 @@
         
         <label>Phone:</label>
         <input type="text" name="phone" required>
+        
+        <label>Assigned Doctor:</label>
+        <select name="primary_doctor_id" required>
+            <option value="" disabled selected>Select a doctor...</option>
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialty }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
         
         <button type="submit">Register Patient</button>
     </form>
