@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div style="background: rgba(15, 23, 42, 0.9); padding: 20px; border-radius: 8px; border: 1px solid rgba(0, 255, 170, 0.3); margin-bottom: 30px;">
+        <h1 style="color: #00ffaa; margin: 0;">{{ doctor.name }}'s Assigned Patients</h1>
+        <p style="color: #64748b; margin-top: 5px;">Specialty: {{ doctor.specialty }} | Contact: {{ doctor.email }}</p>
+    </div>
+
+    <table>
+        <tr>
+            <th>Patient ID</th>
+            <th>Patient Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+        </tr>
+        
+        {% for patient in doctor.patients %}
+        <tr>
+            <td>{{ patient.id }}</td>
+            <td>{{ patient.name }}</td>
+            <td>{{ patient.email }}</td>
+            <td>{{ patient.phone }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" style="text-align: center; color: #e74c3c;">No patients are currently assigned to this doctor.</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <br>
+    <a href="/doctors/" style="color: #64748b; text-decoration: none; font-weight: bold;">&larr; Back to Directory</a>
+{% endblock %}

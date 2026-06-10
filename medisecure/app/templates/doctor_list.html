@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2 style="color: #00ffaa;">Medical Staff Directory</h2>
+    
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Specialty</th>
+            <th>Email</th>
+        </tr>
+        {% for doctor in doctors %}
+        <tr>
+            <td>{{ doctor.id }}</td>
+            <td>
+                <a href="/doctors/{{ doctor.id }}" style="color: #38bdf8; font-weight: bold; text-decoration: none;">
+                    {{ doctor.name }}
+                </a>
+            </td>
+            <td>{{ doctor.specialty }}</td>
+            <td>{{ doctor.email }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

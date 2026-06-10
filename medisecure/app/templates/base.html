@@ -3,18 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediSecure HMS</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>MediSecure Core | BP Studios</title>
+    
+    <link rel="stylesheet" href="/static/style.css?v=V2">
 </head>
-<body>
+<body style="background-color: #060913;">
+
+    <div id="splash-screen">
+        <div id="splash-content" class="splash-content">
+            <h1 class="splash-logo">BP Studios</h1>
+            <div class="splash-sub">SECURE FULL-STACK ARCHITECTURE // CYBERSECURITY CAPSTONE</div>
+        </div>
+    </div>
+
     <nav>
-        <h1>MediSecure HMS</h1>
-        <a href="/api/patients/web">Dashboard</a>
+        <h1>MediSecure <span>HMS</span></h1>
+        <div>
+            <a href="/api/patients/web" style="margin-right: 20px;">Patient Roster</a>
+            <a href="/doctors/">Doctor Directory</a> 
+        </div>
     </nav>
 
     <div class="container">
         {% block content %}
         {% endblock %}
     </div>
+
+    <footer>
+        System Framework Architecture Engineered by <strong>BP Studios</strong> &copy; 2026
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded",function() {
+            let splashBg = document.getElementById('splash-screen');
+            let splashContent = document.getElementById('splash-content');
+
+            if (sessionStorage.getItem("bp_intro_played")) {
+                splashBg.style.display='none';
+                return; 
+            }
+            sessionStorage.setItem("bp_intro_played", "true");
+
+            setTimeout(function() {
+                splashContent.classList.add('fly-away');
+                splashBg.classList.add('fade-out');
+                
+                setTimeout(function() {
+                    splashBg.style.display = 'none';
+                }, 900); 
+
+            }, 2800); 
+        });
+    </script>
 </body>
 </html>
