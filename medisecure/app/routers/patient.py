@@ -9,23 +9,31 @@ from app.schemas.patient import PatientCreate
 from app.models.patient import Patient
 from app.config.database import get_db
 from app.models.doctor_model import Doctor
+from typing import Optional
 
 router = APIRouter()
 
 templates = Jinja2Templates(directory="app/templates")
 
 @router.get('/web', include_in_schema=False)
-def show_patient_webpage(request:Request,db:Session=Depends(get_db)):
-    all_patients=db.query(Patient).all()
-    all_doctors=db.query(Doctor).all() 
+def show_patient_webpage(request: Request, search: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(Patient)
+    if search:
+        search_term = f"%{search}%"
+        query = query.filter(Patient.name.ilike(search_term))
+        
+    all_patients = query.all()
+    all_doctors = db.query(Doctor).all() 
     
     return templates.TemplateResponse(
         request=request, 
         name="patient_list.html", 
         context={
-            "hospital_name":"MediSecure Main Branch", 
-            "patients":all_patients,
-            "doctors":all_doctors 
+            "request": request,
+            "hospital_name": "MediSecure Main Branch", 
+            "patients": all_patients,
+            "doctors": all_doctors,
+            "search_query": search  
         }
     )
 

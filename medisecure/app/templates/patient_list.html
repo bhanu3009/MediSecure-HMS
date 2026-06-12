@@ -3,6 +3,18 @@
 {% block content %}
     
     <h2>Patient Roster</h2>
+
+    <div class="search-container">
+        <form action="/api/patients/web" method="GET" class="search-form">
+            
+            <input type="text" name="search" class="search-input" placeholder="Search patients by name..." value="{{ search_query or '' }}">
+            
+            <button type="submit">Search</button>
+            <a href="/api/patients/web" class="clear-filters-btn">Clear Filters</a>
+            
+        </form>
+    </div>
+
     <table>
         <tr>
             <th>ID</th>

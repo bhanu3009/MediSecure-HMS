@@ -2,28 +2,19 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from datetime import datetime
-
-# Import your database configs
 from app.config.database import SessionLocal, Base, engine
-
-# Import your two routers
 from app.routers import patient as patient_router
 from app.routers import doctor_router
 
-# Initialize the Server
 app = FastAPI(title="MediSecure Backend | BP Studios")
 
-# Mount the static folder so your Cyber Theme CSS loads
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-# FIXED: Added the required prefix and tags back to the patient router
 app.include_router(patient_router.router, prefix="/api/patients", tags=["Patients"])
 app.include_router(doctor_router.router)
 
-# Build the database tables
 Base.metadata.create_all(bind=engine)
 
-# System Health Check Endpoint
 @app.get("/api/health")
 async def check_system_health():
     db_status = "Disconnected"
