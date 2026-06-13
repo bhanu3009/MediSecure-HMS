@@ -15,14 +15,24 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="app/templates")
 
+
 @router.get('/web', include_in_schema=False)
-def show_patient_webpage(request: Request, search: Optional[str] = None, db: Session = Depends(get_db)):
+def show_patient_webpage(request: Request, search: Optional[str] = None, page: int = 1, size: int = 10, db: Session = Depends(get_db)):
     query = db.query(Patient)
+    
     if search:
         search_term = f"%{search}%"
         query = query.filter(Patient.name.ilike(search_term))
         
-    all_patients = query.all()
+    total_records = query.count()
+    total_pages = (total_records + size - 1) // size 
+    if total_pages == 0: 
+        total_pages = 1 
+        
+    offset = (page - 1) * size
+    
+    all_patients = query.offset(offset).limit(size).all()
+    
     all_doctors = db.query(Doctor).all() 
     
     return templates.TemplateResponse(
@@ -33,7 +43,10 @@ def show_patient_webpage(request: Request, search: Optional[str] = None, db: Ses
             "hospital_name": "MediSecure Main Branch", 
             "patients": all_patients,
             "doctors": all_doctors,
-            "search_query": search  
+            "search_query": search,
+            "current_page": page,       
+            "total_pages": total_pages, 
+            "size": size                
         }
     )
 
