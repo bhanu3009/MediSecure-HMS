@@ -11,10 +11,9 @@ from app.config.database import get_db
 from app.models.doctor_model import Doctor
 from typing import Optional
 
-router = APIRouter()
+router=APIRouter()
 
-templates = Jinja2Templates(directory="app/templates")
-
+templates=Jinja2Templates(directory="app/templates")
 
 @router.get('/web', include_in_schema=False)
 def show_patient_webpage(request: Request, search: Optional[str] = None, page: int = 1, size: int = 10, db: Session = Depends(get_db)):
