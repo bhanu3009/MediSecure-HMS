@@ -35,3 +35,14 @@ def process_login(request: Request, username: str = Form(...), password: str = F
     response.set_cookie(key="access_token", value=token, httponly=True)
 
     return response
+
+
+@router.get('/logout', include_in_schema=False)
+def logout_user():
+    # 1. Point the response back to the login screen
+    response = RedirectResponse(url="/login", status_code=303)
+    
+    # 2. Order the browser to shred the digital passport
+    response.delete_cookie("access_token")
+    
+    return response

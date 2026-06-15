@@ -1,22 +1,28 @@
-from fastapi import APIRouter,Depends,HTTPException,Request,Form
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.schemas.patient import PatientCreate,PatientUpdate
+from app.schemas.patient import PatientCreate, PatientUpdate
 from sqlalchemy.orm import Session
 from datetime import datetime 
-from fastapi.templating import Jinja2Templates
-from app.schemas.patient import PatientCreate
 from app.models.patient import Patient
 from app.config.database import get_db
 from app.models.doctor_model import Doctor
 from typing import Optional
+from app.utils.auth import get_current_user
 
-router=APIRouter()
+router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
-templates=Jinja2Templates(directory="app/templates")
-
+# 1. PROTECTED MAIN DASHBOARD
 @router.get('/web', include_in_schema=False)
-def show_patient_webpage(request: Request, search: Optional[str] = None, page: int = 1, size: int = 10, db: Session = Depends(get_db)):
+def show_patient_webpage(
+    request: Request, 
+    search: Optional[str] = None, 
+    page: int = 1, 
+    size: int = 10, 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+):
     query = db.query(Patient)
     
     if search:
@@ -29,9 +35,7 @@ def show_patient_webpage(request: Request, search: Optional[str] = None, page: i
         total_pages = 1 
         
     offset = (page - 1) * size
-    
     all_patients = query.offset(offset).limit(size).all()
-    
     all_doctors = db.query(Doctor).all() 
     
     return templates.TemplateResponse(
@@ -49,14 +53,15 @@ def show_patient_webpage(request: Request, search: Optional[str] = None, page: i
         }
     )
 
-
+# 2. PROTECTED ADD ACTION
 @router.post('/web/add', include_in_schema=False)
 def add_patient_from_web(
     name: str = Form(...), 
     email: str = Form(...), 
     phone: str = Form(...), 
-    primary_doctor_id:int=Form(...),
-    db: Session = Depends(get_db)
+    primary_doctor_id: int = Form(...),
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
 ):
     new_patient = Patient(
         name=name, 
@@ -71,9 +76,13 @@ def add_patient_from_web(
     db.commit()
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
-
+# 3. PROTECTED DELETE ACTION
 @router.post('/web/{patient_id}/delete', include_in_schema=False)
-def delete_patient_web(patient_id: int, db: Session = Depends(get_db)):
+def delete_patient_web(
+    patient_id: int, 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     
     if patient_folder:
@@ -82,24 +91,29 @@ def delete_patient_web(patient_id: int, db: Session = Depends(get_db)):
         
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
-
+# 4. PROTECTED EDIT PAGE
 @router.get('/web/{patient_id}/edit', include_in_schema=False)
-def show_edit_page(patient_id: int, request: Request, db: Session = Depends(get_db)):
+def show_edit_page(
+    patient_id: int, 
+    request: Request, 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
-    
     return templates.TemplateResponse(
         request=request, 
         name="patient_edit.html", 
         context={"patient": patient_folder}
     )
 
-
+# 5. PROTECTED UPDATE ACTION
 @router.post('/web/{patient_id}/edit', include_in_schema=False)
 def update_patient_web(
     patient_id: int, 
     email: str = Form(...), 
     phone: str = Form(...), 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
 ):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     
@@ -111,24 +125,26 @@ def update_patient_web(
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
 
+# --- Pure API JSON Endpoints (Kept Unchanged for Background Requests) ---
+
 @router.get('/')
-def get_all_patients(db:Session=Depends(get_db)):
-    all_patients=db.query(Patient).all()
-    return{
+def get_all_patients(db: Session = Depends(get_db)):
+    all_patients = db.query(Patient).all()
+    return {
         "message": "Hospital roster successfully retrieved!",
-        "total_patients":len(all_patients),
-        "data":all_patients
+        "total_patients": len(all_patients),
+        "data": all_patients
     }
 
 @router.get('/{patient_id}')
-def get_single_patient(patient_id:int,db:Session=Depends(get_db)):
+def get_single_patient(patient_id: int, db: Session = Depends(get_db)):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient_folder:
-        raise HTTPException(status_code=404,detail="Patient record not found in MySQL.")
+        raise HTTPException(status_code=404, detail="Patient record not found in MySQL.")
     return patient_folder
 
 @router.post('/')
-def create_patient(patient_data:PatientCreate,db:Session=Depends(get_db)):
+def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db)):
     try:
         new_patient = Patient(
             name=patient_data.name,
@@ -149,17 +165,16 @@ def create_patient(patient_data:PatientCreate,db:Session=Depends(get_db)):
         }
     except Exception as e:
         return {"error": f"Database Error: {str(e)}"}
-    
 
 @router.put('/{patient_id}')
-def update_patient(patient_id:int,update_data:PatientUpdate,db:Session=Depends(get_db)):
-    patient_folder=db.query(Patient).filter(Patient.id == patient_id).first()
+def update_patient(patient_id: int, update_data: PatientUpdate, db: Session = Depends(get_db)):
+    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     
     if not patient_folder:
-        raise HTTPException(status_code=404,detail="Patient not found.")
+        raise HTTPException(status_code=404, detail="Patient not found.")
     
-    patient_folder.email=update_data.email.lower()
-    patient_folder.phone=update_data.phone
+    patient_folder.email = update_data.email.lower()
+    patient_folder.phone = update_data.phone
     
     db.commit()
     db.refresh(patient_folder)
@@ -179,5 +194,3 @@ def delete_patient(patient_id: int, db: Session = Depends(get_db)):
     db.delete(patient_folder)
     db.commit() 
     return {"message": "Patient record permanently deleted."}
-
-
