@@ -8,7 +8,7 @@ from app.models.patient import Patient
 from app.config.database import get_db
 from app.models.doctor_model import Doctor
 from typing import Optional
-from app.utils.auth import get_current_user
+from app.utils.auth import get_current_user, RoleChecker
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -21,7 +21,7 @@ def show_patient_webpage(
     page: int = 1, 
     size: int = 10, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+    current_user = Depends(get_current_user)  # <-- Bouncer
 ):
     query = db.query(Patient)
     
@@ -49,7 +49,8 @@ def show_patient_webpage(
             "search_query": search,
             "current_page": page,       
             "total_pages": total_pages, 
-            "size": size                
+            "size": size,
+            "current_user": current_user # <-- FIXED: This is required for the HTML to know the user's role!
         }
     )
 
@@ -61,7 +62,7 @@ def add_patient_from_web(
     phone: str = Form(...), 
     primary_doctor_id: int = Form(...),
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+    current_user = Depends(get_current_user)
 ):
     new_patient = Patient(
         name=name, 
@@ -76,12 +77,12 @@ def add_patient_from_web(
     db.commit()
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
-# 3. PROTECTED DELETE ACTION
+# 3. HIGH-SECURITY DELETE ACTION (ADMIN ONLY)
 @router.post('/web/{patient_id}/delete', include_in_schema=False)
 def delete_patient_web(
     patient_id: int, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+    admin_user = Depends(RoleChecker(["Admin"]))  # <-- FIXED: The VIP Guard is active here
 ):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     
@@ -97,13 +98,13 @@ def show_edit_page(
     patient_id: int, 
     request: Request, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+    current_user = Depends(get_current_user)
 ):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     return templates.TemplateResponse(
         request=request, 
         name="patient_edit.html", 
-        context={"patient": patient_folder}
+        context={"patient": patient_folder, "current_user": current_user}
     )
 
 # 5. PROTECTED UPDATE ACTION
@@ -113,7 +114,7 @@ def update_patient_web(
     email: str = Form(...), 
     phone: str = Form(...), 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)  # <-- Bouncer Added Here
+    current_user = Depends(get_current_user)
 ):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     
@@ -183,14 +184,3 @@ def update_patient(patient_id: int, update_data: PatientUpdate, db: Session = De
         "message": "Patient contact info successfully updated!",
         "data": patient_folder
     }
-
-@router.delete('/{patient_id}')
-def delete_patient(patient_id: int, db: Session = Depends(get_db)):
-    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
-
-    if not patient_folder:
-        raise HTTPException(status_code=404, detail="Patient not found.")
-    
-    db.delete(patient_folder)
-    db.commit() 
-    return {"message": "Patient record permanently deleted."}

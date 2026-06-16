@@ -18,6 +18,11 @@
 
     <nav>
         <h1>MediSecure <span>HMS</span></h1>
+        
+        <span style="color: #888; font-size: 0.9em; margin-right: auto; margin-left: 20px; letter-spacing: 1px;">
+            STAFF ID: <strong style="color: #fff;">{{ current_user.username | upper }}</strong> // CLEARANCE: <strong style="color: #eab308;">{{ current_user.role | upper }}</strong>
+        </span>
+
         <div>
             <a href="/api/patients/web" style="margin-right: 20px;">Patient Roster</a>
             <a href="/doctors/" style="margin-right: 20px;">Doctor Directory</a> 

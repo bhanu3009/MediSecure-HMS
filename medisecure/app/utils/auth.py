@@ -43,3 +43,19 @@ async def get_current_user(request: Request, db: Session = Depends(get_db)):
         
     except jwt.PyJWTError:
         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER, headers={"Location": "/login"})
+    
+
+class RoleChecker:
+    """The VIP Guard: A dynamic dependency to enforce strict Role-Based Access Control."""
+    
+    def __init__(self, allowed_roles: list):
+        self.allowed_roles = allowed_roles
+
+    def __call__(self, current_user = Depends(get_current_user)):
+        # Check if the user's role is in the cleared list
+        if current_user.role not in self.allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Operation forbidden. Insufficient clearance."
+            )
+        return current_user

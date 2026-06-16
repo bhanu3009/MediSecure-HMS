@@ -6,12 +6,9 @@
 
     <div class="search-container">
         <form action="/api/patients/web" method="GET" class="search-form">
-            
             <input type="text" name="search" class="search-input" placeholder="Search patients by name..." value="{{ search_query or '' }}">
-            
             <button type="submit">Search</button>
             <a href="/api/patients/web" class="clear-filters-btn">Clear Filters</a>
-            
         </form>
     </div>
 
@@ -30,14 +27,18 @@
             <td>{{ patient.name }}</td>
             <td>{{ patient.email }}</td>
             <td>{{ patient.phone }}</td>
-            
             <td>{{ patient.doctor.name if patient.doctor else "Unassigned" }}</td>
 
-            <td>
-                <a href="/api/patients/web/{{ patient.id }}/edit" style="text-decoration:none; color:#3498db; font-weight:bold;">Edit</a> | 
+            <td class="actions-cell">
+                <a href="/api/patients/web/{{ patient.id }}/edit" style="color: #3b82f6; text-decoration: none; margin-right: 10px;">Edit</a>
+                
+                {% if current_user.role == 'Admin' %}
                 <form action="/api/patients/web/{{ patient.id }}/delete" method="POST" style="display:inline;">
-                    <button type="submit" style="background-color:#e74c3c;">Delete</button>
+                    <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px;">Delete</button>
                 </form>
+                {% else %}
+                <span style="color: #444; font-size: 0.85em; letter-spacing: 1px; user-select: none;">[LOCKED]</span>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
