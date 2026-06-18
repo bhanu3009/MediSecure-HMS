@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, Request, Form, BackgroundTasks
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.schemas.patient import PatientCreate, PatientUpdate
@@ -12,6 +12,7 @@ from app.utils.auth import get_current_user, RoleChecker
 from fastapi import File, UploadFile
 import shutil
 import os
+from app.utils.email_service import send_welcome_email
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -57,9 +58,11 @@ def show_patient_webpage(
         }
     )
 
-# 2. PROTECTED ADD ACTION
+
+# 2. PROTECTED ADD ACTION (NOW WITH ASYNC EMAIL)
 @router.post('/web/add', include_in_schema=False)
 def add_patient_from_web(
+    background_tasks: BackgroundTasks, 
     name: str = Form(...), 
     email: str = Form(...), 
     phone: str = Form(...), 
@@ -78,6 +81,8 @@ def add_patient_from_web(
     
     db.add(new_patient)
     db.commit()
+    
+    background_tasks.add_task(send_welcome_email, patient_name=name, patient_email=email.lower())
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
 # 3. HIGH-SECURITY DELETE ACTION (ADMIN ONLY)

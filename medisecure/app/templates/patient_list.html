@@ -58,26 +58,38 @@
     <hr>
 
     <h2>Register New Patient</h2>
-    <form action="/api/patients/web/add" method="POST">
-        <label>Name:</label>
-        <input type="text" name="name" required>
+    
+    <form action="/api/patients/web/add" method="POST" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
         
-        <label>Email:</label>
-        <input type="email" name="email" required>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="margin: 0;">Name:</label>
+            <input type="text" name="name" required style="margin: 0;">
+        </div>
         
-        <label>Phone:</label>
-        <input type="text" name="phone" required>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="margin: 0;">Email:</label>
+            <input type="email" name="email" required style="margin: 0;">
+        </div>
         
-        <label>Assigned Doctor:</label>
-        <select name="primary_doctor_id" required>
-            <option value="" disabled selected>Select a doctor...</option>
-            {% for doctor in doctors %}
-                <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialty }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="margin: 0;">Phone:</label>
+            <input type="text" name="phone" required style="margin: 0;">
+        </div>
         
-        <button type="submit">Register Patient</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="margin: 0;">Assigned Doctor:</label>
+            <select name="primary_doctor_id" required style="margin: 0; min-width: 200px;">
+                <option value="" disabled selected>Select a doctor...</option>
+                {% for doctor in doctors %}
+                    <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialty }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="width: 100%; margin-top: 10px;">
+            <button type="submit">Register Patient</button>
+        </div>
+        
     </form>
 
 {% endblock %}
