@@ -4,7 +4,8 @@
     
     <h2>Edit Patient: {{ patient.name }}</h2>
     
-    <form action="/api/patients/web/{{ patient.id }}/edit" method="POST">
+    <form action="/api/patients/web/{{ patient.id }}/edit" method="POST" enctype="multipart/form-data">
+        
         <label>Email:</label>
         <input type="email" name="email" value="{{ patient.email }}" required>
         <br><br>
@@ -13,8 +14,15 @@
         <input type="text" name="phone" value="{{ patient.phone }}" required>
         <br><br>
         
-        <button type="submit">Save Changes</button>
+        <hr style="border-color: #333; margin: 20px 0;">
+        <label style="color: #eab308;">Patient ID Scan / Profile Picture:</label>
+        <br>
+        <input type="file" name="profile_pic" accept="image/*" style="margin-top: 10px; margin-bottom: 20px;">
+        <br>
+        
+        <button type="submit">Update Patient Record</button>
         <a href="/api/patients/web" style="margin-left: 15px; color: #7f8c8d; text-decoration: none;">Cancel</a>
+        
     </form>
 
 {% endblock %}

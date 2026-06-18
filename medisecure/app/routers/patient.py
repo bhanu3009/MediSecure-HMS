@@ -9,6 +9,9 @@ from app.config.database import get_db
 from app.models.doctor_model import Doctor
 from typing import Optional
 from app.utils.auth import get_current_user, RoleChecker
+from fastapi import File, UploadFile
+import shutil
+import os
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -108,23 +111,34 @@ def show_edit_page(
     )
 
 # 5. PROTECTED UPDATE ACTION
-@router.post('/web/{patient_id}/edit', include_in_schema=False)
+@router.post('/web/{patient_id}/edit',include_in_schema=False)
 def update_patient_web(
-    patient_id: int, 
-    email: str = Form(...), 
-    phone: str = Form(...), 
-    db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    patient_id:int, 
+    email:str=Form(...), 
+    phone:str=Form(...), 
+    profile_pic:UploadFile=File(None), 
+    db:Session=Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
-    patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
+    patient_folder=db.query(Patient).filter(Patient.id==patient_id).first()
     
     if patient_folder:
-        patient_folder.email = email.lower()
-        patient_folder.phone = phone
+        patient_folder.email=email.lower()
+        patient_folder.phone=phone
+        
+        if profile_pic and profile_pic.filename:
+
+            safe_filename=f"patient_{patient_id}_{profile_pic.filename}"
+            file_location=f"app/uploads/{safe_filename}"
+            
+            with open(file_location, "wb+") as file_object:
+                shutil.copyfileobj(profile_pic.file, file_object)
+
+            patient_folder.profile_picture_url=f"/uploads/{safe_filename}"
+            
         db.commit()
         
-    return RedirectResponse(url="/api/patients/web", status_code=303)
-
+    return RedirectResponse(url="/api/patients/web",status_code=303)
 
 # --- Pure API JSON Endpoints (Kept Unchanged for Background Requests) ---
 

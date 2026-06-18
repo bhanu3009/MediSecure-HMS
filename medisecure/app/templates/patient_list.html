@@ -24,7 +24,18 @@
         {% for patient in patients %}
         <tr>
             <td>{{ patient.id }}</td>
-            <td>{{ patient.name }}</td>
+            
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    {% if patient.profile_picture_url %}
+                        <img src="{{ patient.profile_picture_url }}" width="40" height="40" style="border-radius: 50%; object-fit: cover; border: 2px solid #eab308;">
+                    {% else %}
+                        <span style="font-size: 24px;">👤</span>
+                    {% endif %}
+                    
+                    <span>{{ patient.name }}</span>
+                </div>
+            </td>
             <td>{{ patient.email }}</td>
             <td>{{ patient.phone }}</td>
             <td>{{ patient.doctor.name if patient.doctor else "Unassigned" }}</td>

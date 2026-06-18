@@ -6,14 +6,19 @@ from app.config.database import SessionLocal, Base, engine
 from app.routers import patient as patient_router
 from app.routers import doctor_router
 from app.routers import auth_router
+import os
 
 app = FastAPI(title="MediSecure Backend | BP Studios")
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static",StaticFiles(directory="app/static"),name="static")
 
-app.include_router(patient_router.router, prefix="/api/patients", tags=["Patients"])
+os.makedirs("app/uploads",exist_ok=True)
+
+app.include_router(patient_router.router,prefix="/api/patients",tags=["Patients"])
 app.include_router(doctor_router.router)
 app.include_router(auth_router.router)
+app.mount("/static",StaticFiles(directory="app/static"),name="static")
+app.mount("/uploads",StaticFiles(directory="app/uploads"),name="uploads")
 
 Base.metadata.create_all(bind=engine)
 

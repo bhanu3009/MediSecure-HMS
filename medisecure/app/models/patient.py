@@ -17,3 +17,5 @@ class Patient(Base):
     primary_doctor_id = Column(Integer, ForeignKey("doctors.id"))
 
     doctor = relationship("Doctor", back_populates="patients")
+
+    profile_picture_url = Column(String, nullable=True)
