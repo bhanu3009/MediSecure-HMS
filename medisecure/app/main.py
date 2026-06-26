@@ -2,26 +2,34 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from datetime import datetime
+import os
+
 from app.config.database import SessionLocal, Base, engine
 from app.routers import patient as patient_router
 from app.routers import doctor_router
 from app.routers import auth_router
-import os
+from app.routers import api_patient_router
 
 app = FastAPI(title="MediSecure Backend | BP Studios")
 
-app.mount("/static",StaticFiles(directory="app/static"),name="static")
+# 1. FILE SYSTEM MOUNTS (Grouped together)
+os.makedirs("app/uploads", exist_ok=True)
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/uploads", StaticFiles(directory="app/uploads"), name="uploads")
 
-os.makedirs("app/uploads",exist_ok=True)
-
-app.include_router(patient_router.router,prefix="/api/patients",tags=["Patients"])
+# 2. ROUTER REGISTRATION
+# Internal HTML Dashboards
+app.include_router(patient_router.router, prefix="/api/patients", tags=["Patients"])
 app.include_router(doctor_router.router)
 app.include_router(auth_router.router)
-app.mount("/static",StaticFiles(directory="app/static"),name="static")
-app.mount("/uploads",StaticFiles(directory="app/uploads"),name="uploads")
 
+# External JSON APIs
+app.include_router(api_patient_router.router)
+
+# 3. DATABASE INITIALIZATION
 Base.metadata.create_all(bind=engine)
 
+# 4. HEALTH CHECK ENGINE
 @app.get("/api/health")
 async def check_system_health():
     db_status = "Disconnected"
