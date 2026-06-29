@@ -13,6 +13,7 @@ from fastapi import File, UploadFile
 import shutil
 import os
 from app.utils.email_service import send_welcome_email
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -59,7 +60,7 @@ def show_patient_webpage(
     )
 
 
-# 2. PROTECTED ADD ACTION (NOW WITH ASYNC EMAIL)
+# 2. PROTECTED ADD ACTION (NOW WITH ASYNC EMAIL & ERROR HANDLING)
 @router.post('/web/add', include_in_schema=False)
 def add_patient_from_web(
     background_tasks: BackgroundTasks, 
@@ -79,11 +80,17 @@ def add_patient_from_web(
         primary_doctor_id=primary_doctor_id,
     )
     
-    db.add(new_patient)
-    db.commit()
+    try:
+        db.add(new_patient)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Registration failed: A patient with this email already exists.")
     
     background_tasks.add_task(send_welcome_email, patient_name=name, patient_email=email.lower())
     return RedirectResponse(url="/api/patients/web", status_code=303)
+
+
 
 # 3. HIGH-SECURITY DELETE ACTION (ADMIN ONLY)
 @router.post('/web/{patient_id}/delete', include_in_schema=False)
