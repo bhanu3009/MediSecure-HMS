@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # Service 1: The Database Container
+  db:
+    image: mysql:8.0
+    container_name: medisecure_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: medisecure_root_pass
+      MYSQL_DATABASE: medisecure_db
+    ports:
+      - "3307:3306"  
+    volumes:
+      - mysql_data:/var/lib/mysql  
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-pmedisecure_root_pass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Service 2: The FastAPI Backend Container
+  web:
+    build: .  
+    container_name: medisecure_api
+    restart: always
+    env_file:
+      - .env.docker 
+    ports:
+      - "8000:8000"  
+    depends_on:
+      db:
+        condition: service_healthy  
+
+# Declare the persistent named volume at the bottom
+volumes:
+  mysql_data:
