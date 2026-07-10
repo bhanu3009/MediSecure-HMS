@@ -1,4 +1,0 @@
-the addmited patient name is :jhanu and the age is 70.
-the addmited patient name is :bhanu and the age is 80.
-the addmited patient name is :jhanu and the age is 70.
-the addmited patient name is :bhanu and the age is 80.

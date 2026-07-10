@@ -20,17 +20,19 @@ services:
       retries: 10
 
   # Service 2: The FastAPI Backend Container
+# Service 2: The FastAPI Backend Container
   web:
     build: .  
     container_name: medisecure_api
     restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     env_file:
       - .env.docker 
     ports:
       - "8000:8000"  
     depends_on:
       db:
-        condition: service_healthy  
+        condition: service_healthy
 
 # Declare the persistent named volume at the bottom
 volumes:

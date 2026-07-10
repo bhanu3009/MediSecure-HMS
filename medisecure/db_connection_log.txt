@@ -1,8 +1,0 @@
-[2026-05-31 00:04:09] DB Status: Disconnected - Error: (pymysql.err.OperationalError) (1049, "Unknown database 'medisecure'")
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-[2026-05-31 00:14:29] DB Status: Disconnected - Error: (pymysql.err.OperationalError) (1049, "Unknown database 'medisecure'")
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
-[2026-06-04 00:02:44] DB Status:Connected
-[2026-06-04 00:03:07] DB Status:Connected
-[2026-06-04 00:03:10] DB Status:Connected
-[2026-06-08 00:43:43] DB Status:Connected

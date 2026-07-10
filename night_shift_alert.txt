@@ -1,4 +1,0 @@
-Bhanu needs imediate mointiing because the heartrate is:78 and the oxygen_level is:66.
-Rhanu needs imediate mointiing because the heartrate is:99 and the oxygen_level is:33.
-Hhanu needs imediate mointiing because the heartrate is:55 and the oxygen_level is:88.
-Phanu needs imediate mointiing because the heartrate is:66 and the oxygen_level is:80.

@@ -1,1 +1,18 @@
 .env
+# Environments
+venv/
+env/
+
+# Compiled Python
+__pycache__/
+*.pyc
+
+# Logs and Local Data
+*.txt
+*.json
+!requirements.txt
+
+# Security
+.env
+.env.*
+password.txt
