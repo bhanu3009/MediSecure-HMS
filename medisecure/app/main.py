@@ -1,8 +1,11 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy import text
-from datetime import datetime
 import os
+from datetime import datetime
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlalchemy import text
+from pathlib import Path
 
 from app.config.database import SessionLocal, Base, engine
 from app.routers import patient as patient_router
@@ -12,9 +15,14 @@ from app.routers import api_patient_router
 
 app = FastAPI(title="MediSecure Backend | BP Studios")
 
-# 1. FILE SYSTEM MOUNTS (Grouped together)
+# Base directory points to the 'app' folder where main.py lives
+BASE_DIR = Path(__file__).resolve().parent
+
+# Define absolute paths for templates and static files
+templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+
 os.makedirs("app/uploads", exist_ok=True)
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 app.mount("/uploads", StaticFiles(directory="app/uploads"), name="uploads")
 
 # 2. ROUTER REGISTRATION
@@ -62,3 +70,24 @@ async def check_system_health():
         "database_status": db_status,
         "timestamp": log_time
     }
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to MediSecure HMS API"}
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "MediSecure HMS API"
+    }
+
+# 5. UI ROUTES
+@app.get("/ui/login", response_class=HTMLResponse)
+async def show_login_ui(request: Request):
+    # Updated for newest FastAPI version requirements
+    return templates.TemplateResponse(
+        request=request, 
+        name="login.html", 
+        context={"request": request}
+    )

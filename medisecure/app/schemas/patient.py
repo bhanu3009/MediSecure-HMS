@@ -23,3 +23,14 @@ class PatientResponse(BaseModel):
     profile_picture_url:Optional[str]=None
     
     model_config = ConfigDict(from_attributes=True)
+
+
+from pydantic import BaseModel
+from typing import Optional
+
+class PatientProfileUpdate(BaseModel):
+    phone: Optional[str] = None
+    medical_condition: Optional[str] = None
+    chronic_conditions: Optional[str] = None
+    past_surgeries: Optional[str] = None
+    allergies: Optional[str] = None

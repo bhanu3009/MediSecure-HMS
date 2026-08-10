@@ -1,4 +1,4 @@
-from sqlalchemy import Column,Integer,String,ForeignKey
+from sqlalchemy import Column,Integer,String,ForeignKey,Text
 from sqlalchemy.orm import relationship
 from app.config.database import Base
 
@@ -17,5 +17,8 @@ class Patient(Base):
     primary_doctor_id = Column(Integer, ForeignKey("doctors.id"))
 
     doctor = relationship("Doctor", back_populates="patients")
+    profile_picture_url = Column(String(255), nullable=True)
 
-    profile_picture_url = Column(String, nullable=True)
+    chronic_conditions = Column(Text, nullable=True)
+    past_surgeries = Column(Text, nullable=True)
+    allergies = Column(Text, nullable=True)

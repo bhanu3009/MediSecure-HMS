@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Form, BackgroundTasks
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from app.schemas.patient import PatientCreate, PatientUpdate
+# ---> ADDED: PatientProfileUpdate imported here
+from app.schemas.patient import PatientCreate, PatientUpdate, PatientProfileUpdate
 from sqlalchemy.orm import Session
 from datetime import datetime 
 from app.models.patient import Patient
@@ -55,10 +56,9 @@ def show_patient_webpage(
             "current_page": page,       
             "total_pages": total_pages, 
             "size": size,
-            "current_user": current_user # <-- FIXED: This is required for the HTML to know the user's role!
+            "current_user": current_user 
         }
     )
-
 
 # 2. PROTECTED ADD ACTION (NOW WITH ASYNC EMAIL & ERROR HANDLING)
 @router.post('/web/add', include_in_schema=False)
@@ -91,13 +91,12 @@ def add_patient_from_web(
     return RedirectResponse(url="/api/patients/web", status_code=303)
 
 
-
 # 3. HIGH-SECURITY DELETE ACTION (ADMIN ONLY)
 @router.post('/web/{patient_id}/delete', include_in_schema=False)
 def delete_patient_web(
     patient_id: int, 
     db: Session = Depends(get_db),
-    admin_user = Depends(RoleChecker(["Admin"]))  # <-- FIXED: The VIP Guard is active here
+    admin_user = Depends(RoleChecker(["Admin"]))  
 ):
     patient_folder = db.query(Patient).filter(Patient.id == patient_id).first()
     
@@ -139,20 +138,19 @@ def update_patient_web(
         patient_folder.phone=phone
         
         if profile_pic and profile_pic.filename:
-
             safe_filename=f"patient_{patient_id}_{profile_pic.filename}"
             file_location=f"app/uploads/{safe_filename}"
             
             with open(file_location, "wb+") as file_object:
                 shutil.copyfileobj(profile_pic.file, file_object)
-
             patient_folder.profile_picture_url=f"/uploads/{safe_filename}"
             
         db.commit()
         
     return RedirectResponse(url="/api/patients/web",status_code=303)
 
-# --- Pure API JSON Endpoints (Kept Unchanged for Background Requests) ---
+
+# --- Pure API JSON Endpoints ---
 
 @router.get('/')
 def get_all_patients(db: Session = Depends(get_db)):
@@ -162,6 +160,62 @@ def get_all_patients(db: Session = Depends(get_db)):
         "total_patients": len(all_patients),
         "data": all_patients
     }
+
+# ---> UPDATED STEP 4: Build the View API (Must be ABOVE /{patient_id})
+@router.get('/profile')
+def get_patient_profile(current_user = Depends(get_current_user)):
+    """
+    Fetches the profile of the currently logged-in patient using their JWT token.
+    """
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    # Security Check: Ensure this is actually a patient!
+    if getattr(current_user, "role", None) == "Admin" or hasattr(current_user, "username"):
+        raise HTTPException(status_code=403, detail="Admins cannot have a patient profile.")
+        
+    # Strip sensitive fields before returning the data
+    safe_profile = current_user.__dict__.copy()
+    safe_profile.pop("hashed_password", None)
+    
+    return safe_profile
+
+# ---> UPDATED STEP 5: Build the Update API
+@router.patch('/profile')
+def update_patient_profile(
+    payload: PatientProfileUpdate,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Securely updates the logged-in patient's medical history and contact info.
+    """
+    if not current_user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    # Security Check: Ensure this is actually a patient!
+    if getattr(current_user, "role", None) == "Admin" or hasattr(current_user, "username"):
+        raise HTTPException(status_code=403, detail="Admins cannot update a patient profile.")
+        
+    # Extract only the fields the user actually sent in the request
+    update_data = payload.model_dump(exclude_unset=True)
+    
+    # Apply those specific fields to the database model
+    for key, value in update_data.items():
+        setattr(current_user, key, value)
+        
+    db.commit()
+    db.refresh(current_user)
+    
+    # Strip sensitive fields before returning the data
+    safe_profile = current_user.__dict__.copy()
+    safe_profile.pop("hashed_password", None)
+    
+    return {
+        "message": "Profile updated successfully", 
+        "profile": safe_profile
+    }
+
 
 @router.get('/{patient_id}')
 def get_single_patient(patient_id: int, db: Session = Depends(get_db)):
